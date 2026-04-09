@@ -1,0 +1,9 @@
+POST http://localhost:3000/generate
+Content-Type: application/json
+
+
+{
+  "role": "Software Engineer",
+  "company": "TCS",
+  "weakArea": "DSA"
+}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Placement Cracker</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    input {
+      margin: 8px;
+      padding: 10px;
+      width: 250px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 15px auto;
+      width: 70%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🔥 AI Placement Cracker</h1>
+
+<input id="role" placeholder="Enter role" /><br>
+<input id="company" placeholder="Enter company" /><br>
+<input id="weakArea" placeholder="Weak area (optional)" /><br>
+
+<button onclick="generate()">🚀 Full Prep</button>
+<button onclick="quickRevision()">⚡ Quick Revision</button>
+
+<div id="output"></div>
+
+<script>
+
+// 🔹 Extract sections safely
+function extractSection(text, start, end) {
+  const regex = new RegExp(start + "([\\s\\S]*?)" + end);
+  const match = text.match(regex);
+  return match ? match[1].trim() : "";
+}
+
+// 🔹 Format output properly
+function formatResponse(text) {
+  const qa = extractSection(text, "QUESTIONS & ANSWERS:", "TIPS:");
+  const tips = extractSection(text, "TIPS:", "SELECTION SCORE:");
+  const score = extractSection(text, "SELECTION SCORE:", "WEAK AREAS:");
+  const weak = extractSection(text, "WEAK AREAS:", "IMPROVEMENT:");
+  const improve = text.includes("IMPROVEMENT:")
+    ? text.split("IMPROVEMENT:")[1].trim()
+    : "";
+
+  return `
+    <div class="card">
+      <h3>📌 Questions & Answers</h3>
+      ${qa.split("\n").map(line => `<div>${line}</div>`).join("")}
+    </div>
+
+    <div class="card">
+      <h3>💡 Tips</h3>
+      ${tips.split("\n").map(line => `<div>${line}</div>`).join("")}
+    </div>
+
+    <div class="card">
+      <h3>⭐ Selection Score</h3>
+      <div class="score">${score}</div>
+    </div>
+
+    <div class="card">
+      <h3>⚠️ Weak Areas</h3>
+      ${weak.split("\n").map(line => `<div>${line}</div>`).join("")}
+    </div>
+
+    ${
+      improve
+        ? `<div class="card">
+            <h3>🚀 Improvement Tips</h3>
+            ${improve.split("\n").map(line => `<div>${line}</div>`).join("")}
+          </div>`
+        : ""
+    }
+  `;
+}
+
+// 🚀 FULL PREP
+async function generate() {
+  const role = document.getElementById("role").value;
+  const company = document.getElementById("company").value;
+  const weakArea = document.getElementById("weakArea").value;
+
+  // ✅ Show loading FIRST
+  document.getElementById("output").innerHTML = `
+    <div class="card">
+      <h3>⏳ Generating...</h3>
+      <p>Please wait while AI prepares your interview...</p>
+    </div>
+  `;
+
+  try {
+    const res = await fetch("http://localhost:3000/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role, company, weakArea })
+    });
+
+    const data = await res.json();
+    console.log("Response:", data);
+
+    if (!data.result) {
+      document.getElementById("output").innerText = "⚠️ No output received";
+      return;
+    }
+
+    // ✅ Show formatted result
+    document.getElementById("output").innerHTML =
+      formatResponse(data.result);
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("output").innerText =
+      "❌ Error connecting to server";
+  }
+}
+
+// ⚡ QUICK REVISION
+async function quickRevision() {
+  const role = document.getElementById("role").value;
+  const company = document.getElementById("company").value;
+
+  document.getElementById("output").innerHTML = `
+    <div class="card">
+      <h3>⏳ Generating...</h3>
+    </div>
+  `;
+
+  try {
+    const res = await fetch("http://localhost:3000/quick-revision", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role, company })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("output").innerHTML =
+      `<div class="card">
+        <h3>⚡ Quick Revision</h3>
+        ${data.result.split("\n").map(line => `<div>${line}</div>`).join("")}
+      </div>`;
+
+  } catch (error) {
+    document.getElementById("output").innerText =
+      "❌ Quick revision failed";
+  }
+}
+
+</script>
+
+</body>
+</html>
