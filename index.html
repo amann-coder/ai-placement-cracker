@@ -124,7 +124,7 @@ async function generate() {
   `;
 
   try {
-    const res = await fetch("https://ai-placement-cracker.onrender.com", {
+    const res = await fetch("https://ai-placement-cracker.onrender.com/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role, company, weakArea })
@@ -161,7 +161,7 @@ async function quickRevision() {
   `;
 
   try {
-    const res = await fetch("https://ai-placement-cracker.onrender.com", {
+    const res = await fetch("https://ai-placement-cracker.onrender.com/quick-revision", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role, company })
