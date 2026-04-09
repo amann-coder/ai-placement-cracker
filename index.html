@@ -134,8 +134,8 @@ async function generate() {
     console.log("Response:", data);
 
     if (!data.result) {
-      document.getElementById("output").innerText = "⚠️ No output received";
-      return;
+     document.getElementById("output").innerText =
+  data.result;
     }
 
     // ✅ Show formatted result
