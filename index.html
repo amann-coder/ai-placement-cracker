@@ -161,7 +161,7 @@ async function quickRevision() {
   `;
 
   try {
-    const res = await fetch("http://localhost:3000/quick-revision", {
+    const res = await fetch("https://ai-placement-cracker.onrender.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role, company })
