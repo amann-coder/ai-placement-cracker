@@ -62,9 +62,15 @@
 
 // 🔹 Extract sections safely
 function extractSection(text, start, end) {
-  const regex = new RegExp(start + "([\\s\\S]*?)" + end);
-  const match = text.match(regex);
-  return match ? match[1].trim() : "";
+  const startIndex = text.indexOf(start);
+  const endIndex = text.indexOf(end);
+
+  if (startIndex === -1) return "";
+
+  return text.substring(
+    startIndex + start.length,
+    endIndex !== -1 ? endIndex : text.length
+  ).trim();
 }
 
 // 🔹 Format output properly
@@ -134,9 +140,10 @@ async function generate() {
     console.log("Response:", data);
 
     if (!data.result) {
-     document.getElementById("output").innerText =
-  data.result;
-    }
+  document.getElementById("output").innerText =
+    "⚠️ No response from server";
+  return;
+}
 
     // ✅ Show formatted result
     document.getElementById("output").innerHTML =
@@ -168,12 +175,10 @@ async function quickRevision() {
     });
 
     const data = await res.json();
-
-    document.getElementById("output").innerHTML =
-      `<div class="card">
-        <h3>⚡ Quick Revision</h3>
-        ${data.result.split("\n").map(line => `<div>${line}</div>`).join("")}
-      </div>`;
+document.getElementById("output").innerHTML =
+  `<div class="card">
+    ${data.result.split("\n").map(line => `<div>${line}</div>`).join("")}
+  </div>`;
 
   } catch (error) {
     document.getElementById("output").innerText =

@@ -47,7 +47,8 @@ app.post("/generate", async (req, res) => {
 Role: ${role}
 Company: ${company}
 
-Give SHORT output.
+Give output EXACTLY in this format:
+QUESTIONS & ANSWERS:
 
 Q1:
 A1:
@@ -62,21 +63,18 @@ TIPS:
 
 SELECTION SCORE:
 75/100
+
+WEAK AREAS:
+- ${weakArea || "None"}
 `;
 
-  if (weakArea) {
-    prompt += `
-IMPROVEMENT:
-- ${weakArea}: Tip 1
-- ${weakArea}: Tip 2
-`;
-  }
+
 
   try {
     const response = await openai.chat.completions.create({
       model: "llama-3.1-8b-instant",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 120,
+      max_tokens: 400,
     });
 
     console.log("✅ Got response");
