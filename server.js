@@ -114,7 +114,7 @@ app.post("/quick-revision", async (req, res) => {
           content: `Give quick revision for ${role} at ${company} in 3 questions + 3 tips`,
         },
       ],
-      max_tokens: 80,
+      max_tokens: 800,
     });
 
     return res.json({
